@@ -2,7 +2,7 @@
 #define MAT4_HPP
 
 #include <array>
-#include "Vec4.hpp"
+#include "../Vec4.hpp"
 
 
 namespace LAFG {

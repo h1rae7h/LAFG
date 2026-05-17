@@ -2,7 +2,7 @@
 #define MAT3_HPP
 
 #include <array>
-#include "Vec3.hpp"
+#include "../Vec3.hpp"
 
 
 namespace LAFG {
