@@ -1,8 +1,8 @@
 #ifndef TRANSFORM_HPP
 #define TRANSFORM_HPP
 
-#include "../Mat3.hpp"
-#include "../Mat4.hpp"
+#include "Mat3.hpp"
+#include "Mat4.hpp"
 
 
 namespace LAFG {
