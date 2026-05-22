@@ -54,6 +54,7 @@ namespace LAFG {
 		friend Mat4Template operator*(T left, const Ma4Template& right);
 		friend Mat4Template operator/(const Mat4Template& left, T right);
 		friend bool operator==(const Mat4Template& left, const Mat4Template& right);
+		friend bool operator!=(const Mat4Template& left, const Mat4Template& right);
 
 		friend Mat4Template transpose(const Mat4Template& mat);
 		friend T det(const Mat4Template& mat);
@@ -188,7 +189,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Mat4Template<T>& Mat4Template<T>::operator-=(T right) {
+	inline Mat4Template<T>& Mat4Template<T>::operator-=(T right) {
 		data[0] -= right;
 		data[1] -= right;
 		data[2] -= right;
@@ -197,7 +198,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Mat4Template<T>& Mat4Template<T>::operator*=(const Mat4Template& right) {
+	inline Mat4Template<T>& Mat4Template<T>::operator*=(const Mat4Template& right) {
 		data[0].x = data[0].x * right.data[0].x + data[1].x * right.data[0].y + data[2].x * right.data[0].z + data[3].x * right.data[0].w;
 		data[0].y = data[0].y * right.data[0].x + data[1].y * right.data[0].y + data[2].y * right.data[0].z + data[3].y * right.data[0].w;
 		data[0].z = data[0].z * right.data[0].x + data[1].z * right.data[0].y + data[2].z * right.data[0].z + data[3].z * right.data[0].w;
@@ -218,7 +219,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Mat4Template<T>& Mat4Template<T>::operator*=(T right) {
+	inline Mat4Template<T>& Mat4Template<T>::operator*=(T right) {
 		data[0] *= right;
 		data[1] *= right;
 		data[2] *= right;
@@ -227,7 +228,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Mat4Template<T>& Mat4Template<T>::operator/=(T right) {
+	inline Mat4Template<T>& Mat4Template<T>::operator/=(T right) {
 		data[0] /= right;
 		data[1] /= right;
 		data[2] /= right;
@@ -326,6 +327,11 @@ namespace LAFG {
 	template<typename T>
 	inline bool operator==(const Mat4Template<T>& left, const Mat4Template<T>& right) {
 		return left.data[0] == right.data[0] && left.data[1] == right.data[1] && left.data[2] == right.data[2] && left.data[3] == right.data[3];
+	}
+
+	template<typename T>
+	inline bool operator!=(const Mat4Template<T>& left, const Mat4Template<T>& right) {
+		return left.data[0] != right.data[0] || left.data[1] != right.data[1] || left.data[2] != right.data[2] || left.data[3] != right.data[3];
 	}
 
 	/*------------------------------------------------------------------------*/

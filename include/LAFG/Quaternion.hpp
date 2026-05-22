@@ -23,15 +23,15 @@ namespace LAFG {
 
 		/*------------------------------------------------------------------------*/
 		// class member operators
-		Quaternion operator+(const Quaternion& right) const {
+		inline Quaternion operator+(const Quaternion& right) const {
 			return Quaternion(a + right.a, b + right.b, c + right.c, d + right.d);
 		}
 
-		Quaternion operator-(const Quaternion& right) const {
+		inline Quaternion operator-(const Quaternion& right) const {
 			return Quaternion(a - right.a, b - right.b, c - right.c, d - right.d);
 		}
 
-		Quaternion operator*(const Quaternion& right) const {
+		inline Quaternion operator*(const Quaternion& right) const {
 			return Quaternion(
 				a * right.a - b * right.b - c * right.c - d * right.d,
 				a * right.b + b * right.a + c * right.d - d * right.c,
@@ -39,11 +39,11 @@ namespace LAFG {
 				a * right.d + b * right.c - c * right.b + d * right.a);
 		}
 
-		bool operator==(const Quaternion& right) const {
+		inline bool operator==(const Quaternion& right) const {
 			return a == right.a && b == right.b && c == right.c && d == right.d;
 		}
 
-		Quaternion& operator=(const Quaternion& right) {
+		inline Quaternion& operator=(const Quaternion& right) {
 			a = right.a;
 			b = right.b;
 			c = right.c;
@@ -51,12 +51,12 @@ namespace LAFG {
 			return *this;
 		}
 
-		Quaternion operator+(const float& right) const {
+		inline Quaternion operator+(const float& right) const {
 			return Quaternion(
 				a + right, b, c, d);
 		}
 
-		Quaternion operator*(const float& right) const {
+		inline Quaternion operator*(const float& right) const {
 			return Quaternion(
 				a * right,
 				b * right,
@@ -66,7 +66,7 @@ namespace LAFG {
 
 		/*------------------------------------------------------------------------*/
 		// class member functions
-		float lenght() {
+		inline float lenght() {
 			return sqrtf(a * a + b * b + c * c + d * d);
 		}
 

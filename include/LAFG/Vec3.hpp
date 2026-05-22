@@ -239,6 +239,11 @@ namespace LAFG {
 	inline bool operator==(const Vec3Template<T>& left, const Vec3Template<T>& right) {
 		return left.x == right.x && left.y == right.y && left.z == right.z;
 	}
+	
+	template<typename T>
+	inline bool operator!=(const Vec3Template<T>& left, const Vec3Template<T>& right) {
+		return left.x != right.x || left.y != right.y || left.z != right.z;
+	}
 
 	/*------------------------------------------------------------------------*/
 	// functions

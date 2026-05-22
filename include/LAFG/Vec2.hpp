@@ -124,7 +124,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Vec2Template<T>& Vec2Template<T>::operator*=(const Vec2Template& right) {
+	inline Vec2Template<T>& Vec2Template<T>::operator*=(const Vec2Template& right) {
 		x *= right.x;
 		y *= right.y;
 		return *this; 
@@ -216,6 +216,11 @@ namespace LAFG {
 	template<typename T>
 	inline bool operator==(const Vec2Template<T>& left, const Vec2Template<T>& right) {
 		return left.x == right.x && left.y == right.y;
+	}
+
+	template<typename T>
+	inline bool operator!=(const Vec2Template<T>& left, const Vec2Template<T>& right) {
+		return left.x != right.x || left.y != right.y;
 	}
 
 	/*------------------------------------------------------------------------*/

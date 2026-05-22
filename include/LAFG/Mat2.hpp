@@ -43,6 +43,7 @@ namespace LAFG {
 		friend Mat2Template operator*(T left, const Mat2Template& right);
 		friend Mat2Template operator/(const Mat2Template& left, T right);
 		friend bool operator==(const Mat2Template& left, const Mat2Template& right);
+		friend bool operator!=(const Mat2Template& left, const Mat2Template& right);
 
 		Vec2Template<T> row(int i) const;
 		Vec2Template<T> col(int i) const;
@@ -60,42 +61,42 @@ namespace LAFG {
 	/*------------------------------------------------------------------------*/
 	// constructors
 	template<typename T>
-	Mat2Template<T>::Mat2Template() {}
+	inline Mat2Template<T>::Mat2Template() {}
 	
 	template<typename T>
-	Mat2Template<T>::Mat2Template(const Mat2Template& mat)
+	inline Mat2Template<T>::Mat2Template(const Mat2Template& mat)
 		: firstCol(mat.firstCol), secondCol(mat.secondCol) {}
 
 	template<typename T>
-	Mat2Template<T>::Mat2Template(const Vec2Template<T>& firstVec, const Vec2Template<T>& secondVec)
+	inline Mat2Template<T>::Mat2Template(const Vec2Template<T>& firstVec, const Vec2Template<T>& secondVec)
 		: firstCol(firstVec), secondCol(secondVec) {}
 
 	template<typename T>
-	Mat2Template<T>::Mat2Template(T init)
+	inline Mat2Template<T>::Mat2Template(T init)
 		: firstCol(init, 0.f), secondCol(0.f, init) {}
 
 	template<typename T>
-	Mat2Template<T>::Mat2Template(T firstX, T firstY, T secondX, T secondY)
+	inline Mat2Template<T>::Mat2Template(T firstX, T firstY, T secondX, T secondY)
 		: firstCol(firstX, firstY), secondCol(secondX, secondY) {}
 
 	/*------------------------------------------------------------------------*/
 	// class member operators
 	template<typename T>
-	Vec2Template<T>& Mat2Template<T>::operator[](int i) {
+	inline Vec2Template<T>& Mat2Template<T>::operator[](int i) {
 		if (i == 1)
 			return secondCol;
 		return firstCol;
 	}
 
 	template<typename T>
-	const Vec2Template<T>& Mat2Template<T>::operator[](int i) const {
+	inline const Vec2Template<T>& Mat2Template<T>::operator[](int i) const {
 		if (i == 1)
 			return secondCol;
 		return firstCol;
 	}
 
 	template<typename T>
-	const Mat2Template<T>& Mat2Template<T>::operator+() const {
+	inline const Mat2Template<T>& Mat2Template<T>::operator+() const {
 		return *this;
 	}
 
@@ -167,7 +168,7 @@ namespace LAFG {
 	}
 
 	template<typename T>
-	Mat2Template<T>& Mat2Template<T>::operator/=(T right) {
+	inline Mat2Template<T>& Mat2Template<T>::operator/=(T right) {
 		firstCol /= right;
 		secondCol /= right;
 		return *this;
@@ -249,6 +250,13 @@ namespace LAFG {
 		return
 			left.firstCol.x == right.firstCol.x && left.fisrtCol.y == right.firstCol.y &&
 			left.secondCol.x == right.secondCol.x && left.secondCol.y == right.secondCol.y;
+	}
+
+	template<typename T>
+	inline bool operator!=(const Mat2Template<T> &left, const Mat2Template<T> &right) {
+		return
+			left.firstCol.x != right.firstCol.x || left.firstCol.y != right.firstCol.y ||
+			left.secondCol.x != right.secondCol.x || left.secondCol.y != right.secondCol.y;
 	}
 
 	/*------------------------------------------------------------------------*/

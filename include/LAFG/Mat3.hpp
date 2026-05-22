@@ -50,6 +50,7 @@ namespace LAFG {
 		friend Mat3Template operator*(T left, const Mat3Template& right);
 		friend Mat3Template operator/(const Mat3Template& left, T right);
 		friend bool operator==(const Mat3Template& left, const Mat3Template& right);
+		friend bool operator!=(const Mat3Template& left, const Mat3Template& right);
 
 		friend Mat3Template transpose(const Mat3Template& mat);
 		friend T det(const Mat3Template& mat);
@@ -292,6 +293,11 @@ namespace LAFG {
 	template<typename T>
 	inline bool operator==(const Mat3Template<T>& left, const Mat3Template<T>& right) {
 		return left.data[0] == right.data[0] && left.data[1] == right.data[1] && left.data[2] == right.data[2];
+	}
+
+	template<typename T>
+	inline bool operator!=(const Mat3Template<T>& left, const Mat3Template<T>& right) {
+		return left.data[0] != right.data[0] || left.data[1] != right.data[1] || left.data[2] != right.data[2];
 	}
 
 	/*------------------------------------------------------------------------*/

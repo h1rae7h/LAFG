@@ -255,6 +255,11 @@ namespace LAFG {
 		return left.x == right.x && left.y == right.y && left.z == right.z && left.w == right.w;
 	}
 
+	template<typename T>
+	inline bool operator!=(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+		return left.x != right.x || left.y != right.y || left.z != right.z || left.w != right.w;
+	}
+
 	/*------------------------------------------------------------------------*/
 	// functions
 	template<typename T>
