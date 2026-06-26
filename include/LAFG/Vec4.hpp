@@ -1,5 +1,8 @@
-#ifndef VEC4_H
-#define VEC4_H
+#ifndef VEC4_HPP
+#define VEC4_HPP
+
+#include "Common.hpp"
+#include "Vec2.hpp"
 
 #include <cmath>
 
@@ -7,315 +10,274 @@
 namespace LAFG {
 
 	/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
-	// class body
-	template<typename T>
+	// Class body
+
+	template<Number T>
 	class Vec4Template {
 	public:
-		// constructors
-		Vec4Template();
-		Vec4Template(T x, T y, T z, T w);
-		Vec4Template(T init);
-		Vec4Template(const Vec4Template& init);
-
-		T& operator[](int i);
-		const T& operator[](int i) const;
-		const Vec4Template& operator+() const;
-		Vec4Template operator-() const;
-		Vec4Template& operator=(const Vec4Template& right);
-		Vec4Template& operator=(T right);
-		Vec4Template& operator+=(const Vec4Template& right);
-		Vec4Template& operator+=(T right);
-		Vec4Template& operator-=(const Vec4Template& right);
-		Vec4Template& operator-=(T right);
-		Vec4Template& operator*=(const Vec4Template& right);
-		Vec4Template& operator*=(T right);
-		Vec4Template& operator/=(const Vec4Template& right);
-		Vec4Template& operator/=(T right);
+		/*------------------------------------------------------------------------*/
+		// Constructors
+		
+		Vec4Template() = default;
+		
+		Vec4Template(T x, T y, T z, T w)
+			: x{x}, y{y}, z{z}, w{w} {}
+		
+		Vec4Template(T init)
+			: x{init}, y{init}, z{init}, w{init} {}
+		
+		Vec4Template(const Vec2Template<T>& first, const Vec2Template<T>& second)
+			: x{first.x}, y{first.y}, z{second.x}, w{second.y} {}
+		
+		Vec4Template(const Vec4Template& init)
+			: x{init.x}, y{init.y}, z{init.z}, w{init.w} {}
 
 		/*------------------------------------------------------------------------*/
-		// data			
+		// Conversion operators
+
+		// Convert to another subtype Vec2
+		template<Number U>
+		operator Vec2Template<U>() const { return Vec4Template<U>(x, y, z, w); }
+
+		// True if at least one of vector components is not 0
+		explicit operator bool() const { return x || y || z || w; }
+
+		/*------------------------------------------------------------------------*/
+		// Class-member operators
+
+		T& operator[](size_t i) {
+			assert(i >= 0 && i < 4);
+			return *(&x + i);
+		}
+
+		const T& operator[](size_t i) const {
+			assert(i >= 0 && i < 4);
+			return *(&x + i);
+		}
+
+		const Vec4Template& operator+() const {
+			return *this;
+		}
+
+		Vec4Template operator-() const {
+			return Vec2Template(-x, -y, -z, -w);
+		}
+		
+		Vec4Template& operator=(const Vec4Template& right) {
+			x = right.x;
+			y = right.y;
+			z = right.z;
+			w = right.w;
+			return *this;
+		}
+		
+		Vec4Template& operator=(Number auto right) {
+			x = right;
+			y = right;
+			z = right;
+			w = right;
+			return *this;
+		}
+
+		template<Number U> Vec4Template& operator+=(const Vec4Template<U>& right) {
+			x += right.x;
+			y += right.y;
+			z += right.z;
+			w += right.w;
+			return *this;
+		}
+
+		Vec4Template& operator+=(Number auto right) {
+			x += right;
+			y += right;
+			z += right;
+			w += right;
+			return *this;
+		}
+
+		template<Number U> Vec4Template& operator-=(const Vec4Template<U>& right) {
+			x -= right.x;
+			y -= right.y;
+			z -= right.z;
+			w -= right.w;
+			return *this;
+		}
+
+		Vec4Template& operator-=(Number auto right) {
+			x -= right;
+			y -= right;
+			z -= right;
+			w -= right;
+			return *this;
+		}
+
+		template<Number U> Vec4Template& operator*=(const Vec4Template<U>& right) {
+			x *= right.x;
+			y *= right.y;
+			z *= right.z;
+			w *= right.w;
+			return *this;
+		}
+
+		Vec4Template& operator*=(Number auto right) {
+			x *= right;
+			y *= right;
+			z *= right;
+			w *= right;
+			return *this;
+		}
+		
+		template<Number U> Vec4Template& operator/=(const Vec4Template<U>& right) {
+			x /= right.x;
+			y /= right.y;
+			z /= right.z;
+			w /= right.w;
+			return *this;
+		}
+		
+		Vec4Template& operator/=(Number auto right) {
+			x /= right;
+			y /= right;
+			z /= right;
+			w /= right;
+			return *this;
+		}
+
+		/*------------------------------------------------------------------------*/
+		// Data			
+
 		T x, y, z, w;
 		
 	};
 
 	/*------------------------------------------------------------------------*/
-	// constructors
-	template<typename T>
-	inline Vec4Template<T>::Vec4Template()
-		: x(0.0), y(0.0), z(0.0), w(0.0) {}
-	
-	template<typename T>
-	inline Vec4Template<T>::Vec4Template(T x, T y, T z, T w)
-		: x(x), y(y), z(z), w(w) {}
-	
-	template<typename T>
-	inline Vec4Template<T>::Vec4Template(T init)
-		: x(init), y(init), z(init), w(init) {}
+	// Global operators
 
-	template<typename T>
-	inline Vec4Template<T>::Vec4Template(const Vec4Template& init)
-		: x(init.x), y(init.y), z(init.z), w(init.w) {}
-
-
-	/*------------------------------------------------------------------------*/
-	// class member operators
-	template<typename T>
-	inline T& Vec4Template<T>::operator[](int i) {
-		switch (i) {
-		case 1:
-			return y;
-		case 2:
-			return z;
-		case 3:
-			return w;
-		default:
-			break;
-		}
-		return x;
-	}
-	template<typename T>
-	inline const T& Vec4Template<T>::operator[](int i) const {
-		switch (i) {
-		case 1:
-			return y;
-		case 2:
-			return z;
-		case 3:
-			return w;
-		default:
-			break;
-		}
-		return x;
-	}
-
-	template<typename T>
-	inline const Vec4Template<T>& Vec4Template<T>::operator+() const {
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T> Vec4Template<T>::operator-() const {
-		return Vec4Template(-x, -y, -z, -w);
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator=(const Vec4Template& right) {
-		x = right.x;
-		y = right.y;
-		z = right.z;
-		w = right.w;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator=(T right) {
-		x = right;
-		y = right;
-		z = right;
-		w = right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator+=(const Vec4Template& right) {
-		x += right.x;
-		y += right.y;
-		z += right.z;
-		w += right.w;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator+=(T right) {
-		x += right;
-		y += right;
-		z += right;
-		w += right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator-=(const Vec4Template& right) {
-		x -= right.x;
-		y -= right.y;
-		z -= right.z;
-		w -= right.w;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator-=(T right) {
-		x -= right;
-		y -= right;
-		z -= right;
-		w -= right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator*=(const Vec4Template& right) {
-		x *= right.x;
-		y *= right.y;
-		z *= right.z;
-		w *= right.w;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator*=(T right) {
-		x *= right;
-		y *= right;
-		z *= right;
-		w *= right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator/=(const Vec4Template& right) {
-		x /= right.x;
-		y /= right.y;
-		z /= right.z;
-		w /= right.w;
-		return *this;
-	}
-
-	template<typename T>
-	inline Vec4Template<T>& Vec4Template<T>::operator/=(T right) {
-		x /= right;
-		y /= right;
-		z /= right;
-		w /= right;
-		return *this;
-	}
-
-	/*------------------------------------------------------------------------*/
-	// global operators
-	template<typename T>
-	inline Vec4Template<T> operator+(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline auto operator+(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return Vec4Template(left.x + right.x, left.y + right.y, left.z + right.z, left.w + right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator+(const Vec4Template<T>& left, T right) {
+	template<Number T>
+	inline auto operator+(const Vec4Template<T>& left, Number auto right) {
 		return Vec4Template(left.x + right, left.y + right, left.z + right, left.w + right);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator+(T left, const Vec4Template<T>& right) {
+	template<Number T>
+	inline auto operator+(Number auto left, const Vec4Template<T>& right) {
 		return Vec4Template(left + right.x, left + right.y, left + right.z, left + right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator-(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline auto operator-(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return Vec4Template(left.x - right.x, left.y - right.y, left.z - right.z, left.w - right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator-(const Vec4Template<T>& left, T right) {
+	template<Number T>
+	inline auto operator-(const Vec4Template<T>& left, Number auto right) {
 		return Vec4Template(left.x - right, left.y - right, left.z - right, left.w - right);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator-(T left, const Vec4Template<T>& right) {
+	template<Number T>
+	inline auto operator-(Number auto left, const Vec4Template<T>& right) {
 		return Vec4Template(left - right.x, left - right.y, left - right.z, left - right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator*(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline auto operator*(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return Vec4Template(left.x * right.x, left.y * right.y, left.z * right.z, left.w * right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator*(const Vec4Template<T>& left, T right) {
+	template<Number T>
+	inline auto operator*(const Vec4Template<T>& left, Number auto right) {
 		return Vec4Template(left.x * right, left.y * right, left.z * right, left.w * right);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator*(T left, const Vec4Template<T>& right) {
+	template<Number T>
+	inline auto operator*(Number auto left, const Vec4Template<T>& right) {
 		return Vec4Template(left * right.x, left * right.y, left * right.z, left * right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator/(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline auto operator/(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return Vec4Template(left.x / right.x, left.y / right.y, left.z / right.z, left.w / right.w);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator/(const Vec4Template<T>& left, T right) {
+	template<Number T>
+	inline auto operator/(const Vec4Template<T>& left, Number auto right) {
 		return Vec4Template(left.x + right, left.y + right, left.z + right, left.w + right);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> operator/(T left, const Vec4Template<T>& right) {
+	template<Number T>
+	inline auto operator/(Number auto left, const Vec4Template<T>& right) {
 		return Vec4Template(left / right.x, left / right.y, left / right.z, left / right.w);
 	}
 
-	template<typename T>
-	inline bool operator==(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline bool operator==(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return left.x == right.x && left.y == right.y && left.z == right.z && left.w == right.w;
 	}
 
-	template<typename T>
-	inline bool operator!=(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	template<Number T, Number U>
+	inline bool operator!=(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return left.x != right.x || left.y != right.y || left.z != right.z || left.w != right.w;
 	}
 
 	/*------------------------------------------------------------------------*/
-	// functions
-	template<typename T>
-	inline T dot(const Vec4Template<T>& left, const Vec4Template<T>& right) {
+	// Functions
+
+	template<Number T, Number U>
+	inline auto dot(const Vec4Template<T>& left, const Vec4Template<U>& right) {
 		return left.x * right.x + left.y * right.y + left.z * right.z + left.w * right.w;
 	}
 
-	template<typename T>
+	template<Number T>
 	inline double length(const Vec4Template<T>& vec) {
 		return sqrt(dot(vec, vec));
 	}
 
-	template<typename T>
-	inline double squaredLength(const Vec4Template<T>& vec) {
-		return dot(vec, vec);
-	}
-
-	inline float length(const Vec4Template<float>& vec) {
+	template<Number T>
+	inline float lengthf(const Vec4Template<T>& vec) {
 		return sqrtf(dot(vec, vec));
 	}
 
-	inline float squaredLength(const Vec4Template<float>& vec) {
+	template<typename T>
+	inline T squaredLength(const Vec4Template<T>& vec) {
 		return dot(vec, vec);
 	}
 
-	template<typename T>
-	inline Vec4Template<T> normalize(const Vec4Template<T>& Vec) {
-		if (Vec.x == 0.0f && Vec.y == 0.0f && Vec.z == 0.0f && Vec.w == 0.0f)
-			return Vec4Template(0.0f);
-		return Vec / length(Vec);
+	template<Number T>
+	inline Vec4Template<double> normalize(const Vec4Template<T>& vec) {
+		return !vec.x && !vec.y && !vec.z && !vec.w ?
+			Vec4Template<double>() : vec / lengthf(vec);
 	}
 
-	inline Vec4Template<float> normalize(const Vec4Template<float>& vec) {
-		if (vec.x == 0.0f && vec.y == 0.0f && vec.z == 0.0f && vec.w == 0.0f)
-			return Vec4Template(0.0f);
-		return vec / length(vec);
+	template<Number T>
+	inline Vec4Template<float> normalizef(const Vec4Template<T>& vec) {
+		return !vec.x && !vec.y && !vec.z && !vec.w ?
+			Vec4Template<float>() : vec / length(vec);
 	}
 
-	template<typename T>
-	inline bool parallel(const Vec4Template<T>& left, const Vec4Template<T>& right) {
-		return	((left.y == 0.0f && right.y == 0.0f) && (left.z == 0.0f && right.z == 0.0f) && (left.w == 0.0f && right.w == 0.0f)) ||
-				((left.x == 0.0f && right.x == 0.0f) && (left.z == 0.0f && right.z == 0.0f) && (left.w == 0.0f && right.w == 0.0f)) ||
-				((left.x == 0.0f && right.x == 0.0f) && (left.y == 0.0f && right.y == 0.0f) && (left.w == 0.0f && right.w == 0.0f)) ||
-				((left.x == 0.0f && right.x == 0.0f) && (left.y == 0.0f && right.y == 0.0f) && (left.z == 0.0f && right.z == 0.0f)) ||
-				((left.x / right.x) == (left.y / right.y) == (left.z / right.z) == (left.w / right.w));
+	template<Number T, Number U>
+	inline bool parallel(const Vec4Template<T>& left, const Vec4Template<U>& right) {
+		return	((!left.y && !right.y) && (!left.z && !right.z) && (!left.w && !right.w)) ||
+				((!left.x && !right.x) && (!left.z && !right.z) && (!left.w && !right.w)) ||
+				((!left.x && !right.x) && (!left.y && !right.y) && (!left.w && !right.w)) ||
+				((!left.x && !right.x) && (!left.y && !right.y) && (!left.z && !right.z)) ||
+				((left.x * right.y == left.y * right.x) &&
+				 (left.x * right.z == left.z * right.x) &&
+				 (left.x * right.w == left.w * right.x) &&
+				 (left.y * right.z == left.z * right.y) &&
+				 (left.y * right.w == left.w * right.y) &&
+				 (left.z * right.w == left.w * right.z));
 	}
 
-	/*------------------------------------------------------------------------*/
-
-	using BVec4 = Vec4Template<bool>;
+	using Vec4 = Vec4Template<float>;
+	using DVec4 = Vec4Template<double>;
 	using CVec4 = Vec4Template<char>;
 	using IVec4 = Vec4Template<int>;
 	using UVec4 = Vec4Template<unsigned>;
-	using Vec4 = Vec4Template<float>;
-	using DVec4 = Vec4Template<double>;
 
 }
 
-#endif // VEC4_H
+#endif // VEC4_HPP

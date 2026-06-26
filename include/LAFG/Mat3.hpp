@@ -1,344 +1,307 @@
 #ifndef MAT3_HPP
 #define MAT3_HPP
 
-#include <array>
 #include "Vec3.hpp"
 
 
 namespace LAFG {
 
 	/*/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\*/
-	// class body
-	template<typename T>
+	// Class body
+	
+	template<Number T>
 	class Mat3Template {
 	public:
-		Mat3Template();
-		Mat3Template(const Mat3Template& mat);
+		/*------------------------------------------------------------------------*/
+		// Constructors
+
+		Mat3Template() = default;
+		
 		Mat3Template(
-			const Vec3Template<T>& firstVec,
-			const Vec3Template<T>& secondVec,
-			const Vec3Template<T>& thirdVec);
-		Mat3Template(T init);
+			const Vec3Template<T>& dataFirst,
+			const Vec3Template<T>& dataSecond,
+			const Vec3Template<T>& dataThird)
+			: data { dataFirst, dataSecond, dataThird } {}
+		
+		explicit Mat3Template(T init)
+			: data {
+				Vec3Template<T>(init, {}, {}),
+				Vec3Template<T>({}, init, {}),
+				Vec3Template<T>({}, {}, init) } {}
+		
 		Mat3Template(
-			T firstX, T firstY, T firstZ,
-			T secondX, T secondY, T secondZ,
-			T thirdX, T thirdY, T thirdZ);
+			T xFirst, T yFirst, T zFirst,
+			T xSecond, T ySecond, T zSecond,
+			T xThird, T yThird, T zThird)
+			: data {
+				Vec3Template<T>(xFirst, yFirst, zFirst),
+				Vec3Template<T>(xSecond, ySecond, zSecond),
+				Vec3Template<T>(xThird, yThird, zThird) } {}
 
-		Vec3Template<T>& operator[](int i);
-		const Vec3Template<T>& operator[](int i) const;
-		const Mat3Template& operator+() const;
-		Mat3Template operator-() const;
-		Mat3Template& operator=(const Mat3Template& right);
-		Mat3Template& operator=(T right);
-		Mat3Template& operator+=(const Mat3Template& right);
-		Mat3Template& operator+=(T right);
-		Mat3Template& operator-=(const Mat3Template& right);
-		Mat3Template& operator-=(T right);
-		Mat3Template& operator*=(const Mat3Template& right);
-		Mat3Template& operator*=(T right);
-		Mat3Template& operator/=(T right);
+		Mat3Template(const Mat3Template& mat)
+			: data { mat.data[0], mat.data[1], mat.data[2] } {}
+		
+		/*------------------------------------------------------------------------*/
+		// Conversion operators
+		
+		template<Number U>
+		operator Mat3Template<U>() const {
+			return Mat3Template<U>(data[0], data[2], data[3]);
+		}
 
-		friend Vec3Template<T> operator*(const Mat3Template& left, const Vec3Template<T>& right);
-		friend Vec3Template<T> operator*(const Vec3Template<T>& left, const Mat3Template& right);
+		explicit operator bool() const { return data[0] || data[1] || data[2]; }
 
-		friend Mat3Template operator+(const Mat3Template& left, const Mat3Template& right);
-		friend Mat3Template operator-(const Mat3Template& left, const Mat3Template& right);
-		friend Mat3Template operator*(const Mat3Template& left, const Mat3Template& right);
-		friend Mat3Template operator+(const Mat3Template& left, T right);
-		friend Mat3Template operator-(const Mat3Template& left, T right);
-		friend Mat3Template operator*(const Mat3Template& left, T right);
-		friend Mat3Template operator*(T left, const Mat3Template& right);
-		friend Mat3Template operator/(const Mat3Template& left, T right);
-		friend bool operator==(const Mat3Template& left, const Mat3Template& right);
-		friend bool operator!=(const Mat3Template& left, const Mat3Template& right);
+		/*------------------------------------------------------------------------*/
+		// Class-member operators
 
-		friend Mat3Template transpose(const Mat3Template& mat);
-		friend T det(const Mat3Template& mat);
+		Vec3Template<T>& operator[](size_t i) {
+			assert(i >= 0 && i < 3);
+			return data[i];
+		}
 
-		Vec3Template<T> row(const int& i);
-		Vec3Template<T> col(const int& i);
+		const Vec3Template<T>& operator[](size_t i) const {
+			assert(i >= 0 && i < 3);
+			return data[i];
+		}
+		
+		const Mat3Template& operator+() const { return *this; }
+		
+		Mat3Template operator-() const {
+			return Mat3Template(-data[0], -data[1], -data[2]);
+		}
+		
+		template<Number U> Mat3Template& operator=(const Mat3Template<U>& right) {
+			data[0] = right.data[0];
+			data[1] = right.data[1];
+			data[2] = right.data[2];
+			return *this;
+		}
+		
+		Mat3Template& operator=(Number auto right) {
+			data[0] = right;
+			data[1] = right;
+			data[2] = right;
+			return *this;
+		}
+		
+		template<Number U> Mat3Template& operator+=(const Mat3Template<U>& right) {
+			data[0] += right.data[0];
+			data[1] += right.data[1];
+			data[2] += right.data[2];
+			return *this;
+		}
+		
+		Mat3Template& operator+=(Number auto right) {
+			data[0] += right;
+			data[1] += right;
+			data[2] += right;
+			return *this;
+		}
+		
+		template<Number U> Mat3Template& operator-=(const Mat3Template<U>& right) {
+			data[0] -= right.data[0];
+			data[1] -= right.data[1];
+			data[2] -= right.data[2];
+			return *this;
+		}
+
+		Mat3Template& operator-=(Number auto right) {
+			data[0] -= right;
+			data[1] -= right;
+			data[2] -= right;
+			return *this;
+		}
+
+		template<Number U> Mat3Template& operator*=(const Mat3Template<U>& right) {
+			data[0] *= right.data[0];
+			data[1] *= right.data[1];
+			data[2] *= right.data[2];
+			return *this;
+		}
+		
+		Mat3Template& operator*=(Number auto right) {
+			data[0] *= right;
+			data[1] *= right;
+			data[2] *= right;
+			return *this;
+		}
+		
+		template<Number U> Mat3Template& operator/=(const Mat3Template<U>& right) {
+			data[0] /= right.data[0];
+			data[1] /= right.data[1];
+			data[2] /= right.data[2];
+			return *this;
+		}
+
+		Mat3Template& operator/=(Number auto right) {
+			data[0] /= right;
+			data[1] /= right;
+			data[2] /= right;
+			return *this;
+		}
+
+		Vec3Template<T> getRow(size_t i);
+		Vec3Template<T> getCol(size_t i);
 
 	private:
 		/*------------------------------------------------------------------------*/
-		// data
-		std::array<Vec3Template<T>, 3> data;
+		// Data
+		
+		Vec3Template<T> data[3];
 
 	};
 
 	/*------------------------------------------------------------------------*/
-	// constructors
-	template<typename T>
-	inline Mat3Template<T>::Mat3Template() {}
+	// Global opeartors
 
-	template<typename T>
-	inline Mat3Template<T>::Mat3Template(const Mat3Template& mat) 
-		: data(mat.data) {}
-
-	template<typename T>
-	inline Mat3Template<T>::Mat3Template(
-		const Vec3Template<T>& firstVec,
-		const Vec3Template<T>& secondVec,
-		const Vec3Template<T>& thirdVec)
-		: data{firstVec, secondVec, thirdVec} {}
-
-	template<typename T>
-	inline Mat3Template<T>::Mat3Template(T init)
-		: data{
-			Vec3Template(init, 0., 0.),
-			Vec3Template(0., init, 0.),
-			Vec3Template(0., 0., init)
-		} {}
-
-	template<typename T>
-	inline Mat3Template<T>::Mat3Template(
-		T firstX, T firstY, T firstZ,
-		T secondX, T secondY, T secondZ,
-		T thirdX, T thirdY, T thirdZ)
-		: data{
-			Vec3Template(firstX, firstY, firstZ),
-			Vec3Template(secondX, secondY, secondZ),
-			Vec3Template(thirdX, thirdY, thirdZ)
-		} {}
-
-	/*------------------------------------------------------------------------*/
-	// class member operators
-	template<typename T>
-	inline Vec3Template<T>& Mat3Template<T>::operator[](int i) {
-		switch (i) {
-		case 1:
-			return data[1];
-		case 2:
-			return data[2];
-		default:
-			break;
-		}
-		return data[0];
-	}
-
-	template<typename T>
-	inline const Vec3Template<T>& Mat3Template<T>::operator[](int i) const {
-		switch (i) {
-		case 1:
-			return data[1];
-		case 2:
-			return data[2];
-		default:
-			break;
-		}
-		return data[0];
-	}
-
-	template<typename T>
-	inline const Mat3Template<T>& Mat3Template<T>::operator+() const {
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T> Mat3Template<T>::operator-() const {
-		return Mat3Template(-data[0], -data[1], -data[2]);
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator=(const Mat3Template& right) {
-		data = right.data;
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator=(T right) {
-		data.fill(right);
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator+=(const Mat3Template& right) {
-		data[0] += right.data[0];
-		data[1] += right.data[1];
-		data[2] += right.data[2];
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator+=(T right) {
-		data[0] += right;
-		data[1] += right;
-		data[2] += right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator-=(const Mat3Template& right) {
-		data[0] -= right.data[0];
-		data[1] -= right.data[1];
-		data[2] -= right.data[2];
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator-=(T right) {
-		data[0] -= right;
-		data[1] -= right;
-		data[2] -= right;
-		return *this;
-	}
-
-	template<typename T>
-	Mat3Template<T>& Mat3Template<T>::operator*=(const Mat3Template& right) {
-		T tempFirstX = data[0].x * right.data[0].x + data[1].x * right.data[0].y + data[2].x * right.data[0].z;
-		T tempFirstY = data[0].y * right.data[0].x + data[1].y * right.data[0].y + data[2].y * right.data[0].z;
-		T tempFirstZ = data[0].z * right.data[0].x + data[1].z * right.data[0].y + data[2].z * right.data[0].z;
-		T tempSecondX = data[0].x * right.data[1].x + data[1].x * right.data[1].y + data[2].x * right.data[1].z;
-		T tempSecondY = data[0].y * right.data[1].x + data[1].y * right.data[1].y + data[2].y * right.data[1].z;
-		T tempSecondZ = data[0].z * right.data[1].x + data[1].z * right.data[1].y + data[2].z * right.data[1].z;
-		T tempThirdX = data[0].x * right.data[2].x + data[1].x * right.data[2].y + data[2].x * right.data[2].z;
-		T tempThirdY = data[0].y * right.data[2].x + data[1].y * right.data[2].y + data[2].y * right.data[2].z;
-		T tempThirdZ = data[0].z * right.data[2].x + data[1].z * right.data[2].y + data[2].z * right.data[2].z;
-		data[0].x = tempFirstX;
-		data[0].y = tempFirstY;
-		data[0].z = tempFirstZ;
-		data[1].x = tempSecondZ;
-		data[1].y = tempSecondZ;
-		data[1].z = tempSecondZ;
-		data[2].x = tempThirdX;
-		data[2].y = tempThirdY;
-		data[2].z = tempThirdZ;
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator*=(T right) {
-		data[0] *= right;
-		data[1] *= right;
-		data[2] *= right;
-		return *this;
-	}
-
-	template<typename T>
-	inline Mat3Template<T>& Mat3Template<T>::operator/=(T right) {
-		data[0] /= right;
-		data[1] /= right;
-		data[2] /= right;
-		return *this;
-	}
-
-	/*------------------------------------------------------------------------*/
-	// Vec3/Mat3Template operators
-	template<typename T>
-	inline Vec3Template<T> operator*(const Mat3Template<T>& left, const Vec3Template<T>& right) {
-		return Vec3Template(
-			left.data[0].x * right.x + left.data[1].x * right.y + left.data[2].x * right.z,
-			left.data[0].y * right.x + left.data[1].y * right.y + left.data[2].y * right.z,
-			left.data[0].z * right.x + left.data[1].z * right.y + left.data[2].z * right.z);
-	}
-
-	template<typename T>
-	inline Vec3Template<T> operator*(const Vec3Template<T>& left, const Mat3Template<T>& right) {
-		return Vec3Template(
-			left.x * right.data[0].x + left.y * right.data[0].y + left.z * right.data[0].z,
-			left.x * right.data[1].x + left.y * right.data[1].y + left.z * right.data[1].z,
-			left.x * right.data[2].x + left.y * right.data[2].y + left.z * right.data[2].z);
-	}
-
-	/*------------------------------------------------------------------------*/
-	// global opeartors
-	template<typename T>
-	inline Mat3Template<T> operator+(const Mat3Template<T>& left, const Mat3Template<T>& right) {
-		return Mat3Template(left.data[0] + right.data[0], left.data[1] + right.data[1], left.data[2] + right.data[2]);
+	template<Number T, Number U>
+	inline auto operator+(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return Mat3Template(left[0] + right[0], left[1] + right[1], left[2] + right[2]);
 	}
 	
-	template<typename T>
-	inline Mat3Template<T> operator-(const Mat3Template<T>& left, const Mat3Template<T>& right) {
-		return Mat3Template(left.data[0] - right.data[0], left.data[1] - right.data[1], left.data[2] - right.data[2]);
+	template<Number T>
+	inline auto operator+(const Mat3Template<T>& left, Number auto right) {
+		return Mat3Template(left[0] + right, left[1] + right, left[2] + right);
 	}
 
-	template<typename T>
-	inline Mat3Template<T> operator*(const Mat3Template<T>& left, const Mat3Template<T>& right) {
+	template<Number T>
+	inline auto operator+(Number auto left, const Mat3Template<T>& right) {
+		return Mat3Template(left + right[0], left + right[1], left + right[2]);
+	}
+
+	template<Number T, Number U>
+	inline auto operator-(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return Mat3Template(left[0] - right[0], left[1] - right[1], left[2] - right[2]);
+	}
+
+	template<Number T>
+	inline auto operator-(const Mat3Template<T>& left, Number auto right) {
+		return Mat3Template(left[0] - right, left[1] - right, left[2] - right);
+	}
+
+	template<Number T>
+	inline auto operator-(Number auto left, const Mat3Template<T>& right) {
+		return Mat3Template(left - right[0], left - right[1], left - right[2]);
+	}
+
+	template<Number T, Number U>
+	inline auto operator*(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return Mat3Template(left[0] * right[0], left[1] * right[1], left[2] * right[2]);
+	}
+
+	template<Number T>
+	inline auto operator*(const Mat3Template<T>& left, Number auto right) {
+		return Mat3Template(left[0] * right, left[1] * right, left[2] * right);
+	}
+
+	template<Number T>
+	inline auto operator*(Number auto left, const Mat3Template<T>& right) {
+		return Mat3Template(left * right[0], left * right[1], left * right[2]);
+	}
+
+	template<Number T, Number U>
+	inline auto operator/(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return Mat3Template(left[0] / right[0], left[1] / right[1], left[2] / right[2]);
+	}
+
+	template<Number T>
+	inline auto operator/(const Mat3Template<T>& left, Number auto right) {
+		return Mat3Template(left[0] / right, left[1] / right, left[2] / right);
+	}
+
+	template<Number T>
+	inline auto operator/(Number auto left, const Mat3Template<T>& right) {
+		return Mat3Template(left / right[0], left / right[1], left / right[2]);
+	}
+	
+	template<Number U, Number T>
+	inline bool operator==(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return left[0] == right[0] && left[1] == right[1] && left[2] == right[2];
+	}
+
+	template<Number T, Number U>
+	inline bool operator!=(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+		return left[0] != right[0] || left[1] != right[1] || left[2] != right[2];
+	}
+
+	/*------------------------------------------------------------------------*/
+	// Methods
+
+	template<Number T>
+	inline Vec3Template<T> Mat3Template<T>::getRow(size_t i) {
+		assert(i >= 0 && i < 3);
+#ifdef LAFG_USE_ROW_LAYOUT
+		return data[i];
+#else
+		return Vec3Template<T>(data[0][i], data[1][i], data[2][i]);
+#endif
+	}
+
+	template<Number T>
+	inline Vec3Template<T> Mat3Template<T>::getCol(size_t i) {
+		assert(i >= 0 && i < 3);
+#ifdef LAFG_USE_ROW_LAYOUT
+		return Vec3Template<T>(data[0][i], data[1][i], data[2][i]);
+#else
+		return data[i];
+#endif
+	}
+
+	/*------------------------------------------------------------------------*/
+	// Functions
+	
+	template<Number T, Number U>
+	inline auto mul(const Mat3Template<T>& left, const Mat3Template<U>& right) {
+#ifdef LAFG_USE_ROW_LAYOUT
 		return Mat3Template(
-		left.data[0].x * right.data[0].x + left.data[1].x * right.data[0].y + left.data[2].x * right.data[0].z,
-		left.data[0].y * right.data[0].x + left.data[1].y * right.data[0].y + left.data[2].y * right.data[0].z,
-		left.data[0].z * right.data[0].x + left.data[1].z * right.data[0].y + left.data[2].z * right.data[0].z,
-		left.data[0].x * right.data[1].x + left.data[1].x * right.data[1].y + left.data[2].x * right.data[1].z,
-		left.data[0].y * right.data[1].x + left.data[1].y * right.data[1].y + left.data[2].y * right.data[1].z,
-		left.data[0].z * right.data[1].x + left.data[1].z * right.data[1].y + left.data[2].z * right.data[1].z,
-		left.data[0].x * right.data[2].x + left.data[1].x * right.data[2].y + left.data[2].x * right.data[2].z,
-		left.data[0].y * right.data[2].x + left.data[1].y * right.data[2].y + left.data[2].y * right.data[2].z,
-		left.data[0].z * right.data[2].x + left.data[1].z * right.data[2].y + left.data[2].z * right.data[2].z);
+				left[0].x * right[0] + left[0].y * right[1] + left[0].z * right[2],
+				left[1].x * right[0] + left[1].y * right[1] + left[1].z * right[2],
+				left[2].x * right[0] + left[2].y * right[1] + left[2].z * right[2]);
+#else
+		return Mat3Template(
+				left[0] * right[0].x + left[1] * right[0].y + left[2] * right[0].z,
+				left[0] * right[1].x + left[1] * right[1].y + left[2] * right[1].z,
+				left[0] * right[2].x + left[1] * right[2].y + left[2] * right[2].z);
+#endif
 	}
 
-	template<typename T>
-	inline Mat3Template<T> operator+(const Mat3Template<T>& left, T right) {
-		return Mat3Template(left.data[0] + right, left.data[1] + right, left.data[2] + right);
+	template<Number T, Number U>
+	inline auto mul(const Mat3Template<T>& left, const Vec3Template<U>& right) {
+#ifdef LAFG_USE_ROW_LAYOUT
+		return Vec3Template(
+				dot(left[0], right),
+				dot(left[1], right),
+				dot(left[2], right));
+#else
+		return left[0] * right.x + left[1] * right.y + left[2] * right.z;
+#endif
 	}
 
-	template<typename T>
-	inline Mat3Template<T> operator-(const Mat3Template<T>& left, T right) {
-		return Mat3Template(left.data[0] - right, left.data[1] - right, left.data[2] - right);
+	template<Number T, Number U>
+	inline auto mul(const Vec3Template<T>& left, const Mat3Template<U>& right) {
+#ifdef LAFG_USE_ROW_LAYOUT
+		return left.x * right[0] + left.y * right[1] + left.z * right[2];
+#else
+		return Vec3Template(
+				dot(left, right[0]),
+				dot(left, right[1]),
+				dot(left, right[2]));
+#endif
 	}
 
-	template<typename T>
-	inline Mat3Template<T> operator*(const Mat3Template<T>& left, T right) {
-		return Mat3Template(left.data[0] * right, left.data[1] * right, left.data[2] * right);
-	}
-
-	template<typename T>
-	inline Mat3Template<T> operator*(T left, const Mat3Template<T>& right) {
-		return mat3tempalte(left * right.data[0], left * right.data[1], left * right.data[2]);
-	}
-
-	template<typename T>
-	inline Mat3Template<T> operator/(const Mat3Template<T>& left, T right) {
-		return Mat3Template(left.data[0] / right, left.data[1] / right, left.data[2] / right);
+	template<Number T>
+	inline Mat3Template<T> transpose(const Mat3Template<T>& mat) {
+		return Mat3Template<T>(
+			mat[0].x, mat[1].x, mat[2].x,
+			mat[0].y, mat[1].y, mat[2].y,
+			mat[0].z, mat[1].z, mat[2].z);
 	}
 	
 	template<typename T>
-	inline bool operator==(const Mat3Template<T>& left, const Mat3Template<T>& right) {
-		return left.data[0] == right.data[0] && left.data[1] == right.data[1] && left.data[2] == right.data[2];
-	}
-
-	template<typename T>
-	inline bool operator!=(const Mat3Template<T>& left, const Mat3Template<T>& right) {
-		return left.data[0] != right.data[0] || left.data[1] != right.data[1] || left.data[2] != right.data[2];
-	}
-
-	/*------------------------------------------------------------------------*/
-	// methods
-	template<typename T>
-	inline Vec3Template<T> Mat3Template<T>::row(const int& i) {
-		switch (i) {
-		case 1:
-			return Vec3Template(data[0].y, data[1].y, data[2].y);
-		case 2:
-			return Vec3Template(data[0].z, data[1].z, data[2].z);
-		default:
-			break;
-		}
-		return Vec3Template(data[0].x, data[1].x, data[2].x);;
-	}
-
-	template<typename T>
-	inline Vec3Template<T> Mat3Template<T>::col(const int& i) {
-		switch (i) {
-		case 1:
-			return data[1];
-		case 2:
-			return data[2];
-		default:
-			break;
-		}
-		return data[0];
-	}
-
-	/*------------------------------------------------------------------------*/
-	// functions
-	template<typename T>
-	inline Mat3Template<T> matrixCompMult(const Mat3Template<T>& left, const Mat3Template<T>& right) {
-		return Mat3Template(left.data[0] * right.data[0], left.data[1] * right.data[1], left.data[2] * right.data[2]);
-	}
-	//Mat3Template transpose(const Mat3Template& Mat);
-	template<typename T>
-	inline T det(const Mat3Template<T> &mat) {
-		return mat[0][0] * mat[1][1] * mat[2][2] + mat[1][0] * mat[2][1] * mat[0][2] + mat[2][0] * mat[0][1] * mat[1][2] -
-			   mat[2][0] * mat[1][1] * mat[0][2] - mat[1][0] * mat[0][1] * mat[2][2] - mat[0][0] * mat[2][1] * mat[1][2];
+	inline T det(const Mat3Template<T>& mat) {
+		return 
+			mat[0][0] * mat[1][1] * mat[2][2] + mat[1][0] * mat[2][1] * mat[0][2] + mat[2][0] * mat[0][1] * mat[1][2] -
+			mat[2][0] * mat[1][1] * mat[0][2] - mat[1][0] * mat[0][1] * mat[2][2] - mat[0][0] * mat[2][1] * mat[1][2];
 	}
 
 	using Mat3 = Mat3Template<float>;

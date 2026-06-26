@@ -1,6 +1,8 @@
 #ifndef QUATERNION_HPP
 #define QUATERNION_HPP
 
+#include "Common.hpp"
+
 #include <cmath>
 
 
@@ -12,38 +14,50 @@
 
 namespace LAFG {
 
-	class Quaternion {
+	template<std::floating_point T>
+	class QuaternionTemplate {
 	public:
-		// constructors
-		Quaternion()
-			: a(0.0f), b(0.0f), c(0.0f), d(0.0f) {}
+		// Constructors
+		
+		QuaternionTemplate()
+			: a {}, b {}, c {}, d {} {}
 
-		Quaternion(const float& a, const float& b, const float& c, const float& d)
-			: a(a), b(b), c(c), d(d) {}
+		QuaternionTemplate(T a, T b, T c, T d)
+			: a {a}, b {b}, c {c}, d {d} {}
+
+		QuaternionTemplate(const Quaternion& init)
+			: a {init.a}, b {init.b}, c {init.c}, d {init.d} {}
 
 		/*------------------------------------------------------------------------*/
-		// class member operators
-		inline Quaternion operator+(const Quaternion& right) const {
-			return Quaternion(a + right.a, b + right.b, c + right.c, d + right.d);
+		// Conversion operators
+
+		template<std::floating_point U> operator QuaternionTemplate<U>() const {
+			return QuaternionTemplate<U>(a, b, c, d);
 		}
 
-		inline Quaternion operator-(const Quaternion& right) const {
-			return Quaternion(a - right.a, b - right.b, c - right.c, d - right.d);
+		explicit bool operator() const { return a || b || c || d; }
+
+		/*------------------------------------------------------------------------*/
+		// Class member operators
+		
+		T& operator[](size_t i) {
+			assert(i >= 0 && i < 4);
+			return *(&a + i);
+		}
+		
+		const T& operator[](size_t i) const {
+			assert(i >= 0 && i < 4);
+			return *(&a + i);
 		}
 
-		inline Quaternion operator*(const Quaternion& right) const {
-			return Quaternion(
-				a * right.a - b * right.b - c * right.c - d * right.d,
-				a * right.b + b * right.a + c * right.d - d * right.c,
-				a * right.c - b * right.d + c * right.a + d * right.b,
-				a * right.d + b * right.c - c * right.b + d * right.a);
+		const QuaternionTemplate& operator+() const { return *this; }
+		
+		QuaternionTemplate operator-() const {
+			return QuternionTemplate(-a, -b, -c, -d);
 		}
 
-		inline bool operator==(const Quaternion& right) const {
-			return a == right.a && b == right.b && c == right.c && d == right.d;
-		}
-
-		inline Quaternion& operator=(const Quaternion& right) {
+		template<std::floating_point U>
+		QuaternionTemplate& operator=(const QuaternionTemplate<U>& right) {
 			a = right.a;
 			b = right.b;
 			c = right.c;
@@ -51,32 +65,94 @@ namespace LAFG {
 			return *this;
 		}
 
-		inline Quaternion operator+(const float& right) const {
-			return Quaternion(
-				a + right, b, c, d);
+		QuaternionTemplate& operator=(Number auto right) {
+			a = right;
+			b = {};
+			c = {};
+			d = {};
+			return *this;
 		}
 
-		inline Quaternion operator*(const float& right) const {
-			return Quaternion(
-				a * right,
-				b * right,
-				c * right,
-				d * right);
+		template<std::floating_point U>
+		QuaternionTemplate& operator+=(const QuaternionTemplate<U>& right) {
+			a += right.a;
+			b += right.b;
+			c += right.c;
+			d += right.d;
+			return *this;
+		}
+		
+		QuaternionTemplate& operator+=(Number auto right) {
+			a += right;
+			return *this;
+		}
+
+		template<std::floating_point U>
+		QuaternionTemplate& operator-=(const QuaternionTemplate<U>& right) {
+			a -= right.a;
+			b -= right.b;
+			c -= right.c;
+			d -= right.d;
+			return *this;
+		}
+
+		QuaternionTemplate operator-=(Number auto right) {
+			a -= right;
+			return *this;
+		}
+
+		template<std::floating_point U>
+		QuaternionTemplate& operator*=(const QuaternionTemplate<U>& right) {
+			T aNew = a * right.a - b * right.b - c * right.c - d * right.d;
+			T bNew = a * right.b + b * right.a + c * right.d - d * right.c;
+			T cNew = a * right.c - b * right.d + c * right.a + d * right.b;
+			T dNew = a * right.d + b * right.c - c * right.b + d * right.a;
+			a = aNew;
+			b = bNew;
+			c = cNew;
+			d = dNew;
+			return *this;
+		}
+
+		QuaternionTemplate& operator*=(Number auto right) {
+			a *= right;
+			b *= right;
+			c *= right;
+			d *= right;
+			return *this;
+		}
+
+		template<std::floating_point U>
+		bool operator==(const QuaternionTemplate<U>& right) const {
+			return a == right.a && b == right.b && c == right.c && d == right.d;
+		}
+
+		template<std::floating_point U>
+		bool operator!=(const QuaternionTemplate<U>& right) const {
+			return a != right.a || b != right.b || c != right.c || d != right.d;
 		}
 
 		/*------------------------------------------------------------------------*/
-		// class member functions
-		inline float lenght() {
-			return sqrtf(a * a + b * b + c * c + d * d);
+		// Methods
+		
+		T lenght() const {
+			if constexpr(std::same_as<T, float>)
+				return sqrtf(a * a + b * b + c * c + d * d);
+			else
+				return sqrt(a * a + b * b + c * c + d * d);
 		}
 
 		/*------------------------------------------------------------------------*/
-		// data
-		float a;
-		float b; // * i
-		float c; // * j
-		float d; // * k
+		// Data
+		
+		T a;
+		T b; // * i
+		T c; // * j
+		T d; // * k
 	};
+
+	using Quaternion = QuaternionTemplate<float>;
+	using DQuaternion = QuaternionTemplate<double>;
 
 }
 
